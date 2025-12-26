@@ -1,0 +1,9 @@
+# GUI framework
+PyQt6>=6.6.0
+
+# Standard library modules used (no installation needed)
+# sys, os, pathlib, json
+
+# Notes:
+# - PyQt6 includes QtWidgets, QtGui, QtCore, QtMultimedia, QtMultimediaWidgets
+# - Ensure your system has video codecs to play mp4, avi, mkv
