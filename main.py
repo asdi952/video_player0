@@ -109,9 +109,12 @@ class VideoPlayer(QWidget):
         self.setWindowTitle("Video Player")
         self.resize(800, 500)
 
-        self.video = QVideoWidget()
-        # print("self.video.video_widget.geometry()", self.video.video_widget.geometry())
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setFocus()
 
+        self.video = QVideoWidget()
+        self.video.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        # print("self.video.video_widget.geometry()", self.video.video_widget.geometry())
         self.player = QMediaPlayer(self)
         self.audio = QAudioOutput(self)
 
@@ -179,6 +182,9 @@ class VideoPlayer(QWidget):
         self.playbackSpeed = 1
 
         self.playbackSpeedLabel = FadeLetterOverlay(self)
+
+        self.volume = 1
+        self.audio.setVolume(self.volume)
        
 
     def on_position_changed(self, position):
@@ -201,12 +207,22 @@ class VideoPlayer(QWidget):
             else:
                 self.player.play()
 
-        elif event.key() == Qt.Key.Key_A:
+        elif event.key() in [Qt.Key.Key_A, Qt.Key.Key_Left]:
             pos = self.player.position()
             self.player.setPosition(max(0, pos - 2000))
-        elif event.key() == Qt.Key.Key_D:
+        elif event.key() in [Qt.Key.Key_D, Qt.Key.Key_Right]:
             pos = self.player.position()
             self.player.setPosition(max(0, pos + 2000))
+        elif event.key() in [ Qt.Key.Key_Up]:
+            self.volume += 0.1
+            self.volume = min(max(0, self.volume),1)
+            self.audio.setVolume(self.volume)
+
+        elif event.key() in [ Qt.Key.Key_Down]:
+            self.volume -= 0.1
+            self.volume = min(max(0, self.volume),1)
+            self.audio.setVolume(self.volume)
+
         elif event.key() == Qt.Key.Key_Escape:
             self.player.stop()
             QApplication.quit()
@@ -214,10 +230,10 @@ class VideoPlayer(QWidget):
             number_pressed = event.key() - Qt.Key.Key_0
 
             if ctrl_pressed:
-                self.tpkeys[number_pressed] = str(self.player.position())
+                self.tpkeys[str(number_pressed)] = str(self.player.position())
                 save_config(self.storage)
             else:
-                position = self.tpkeys.get(str(number_pressed))
+                position = int(self.tpkeys.get(str(number_pressed)))
                 if position is None: return
 
                 self.player.setPosition(position)
