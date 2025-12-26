@@ -200,13 +200,13 @@ class VideoPlayer(QWidget):
 
     def keyPressEvent(self, event):
         ctrl_pressed = event.modifiers() & Qt.KeyboardModifier.ControlModifier
+        shift_pressed = event.modifiers() & Qt.KeyboardModifier.ShiftModifier
 
         if event.key() == Qt.Key.Key_Space:
             if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
                 self.player.pause()
             else:
                 self.player.play()
-
         elif event.key() in [Qt.Key.Key_A, Qt.Key.Key_Left]:
             pos = self.player.position()
             self.player.setPosition(max(0, pos - 2000))
@@ -226,16 +226,23 @@ class VideoPlayer(QWidget):
         elif event.key() == Qt.Key.Key_Escape:
             self.player.stop()
             QApplication.quit()
-        elif Qt.Key.Key_1 <= event.key() <= Qt.Key.Key_9:
-            number_pressed = event.key() - Qt.Key.Key_0
 
-            if ctrl_pressed:
-                self.tpkeys[str(number_pressed)] = str(self.player.position())
+        elif Qt.Key.Key_0 <= event.key() <= Qt.Key.Key_9:
+            number_pressed = event.key() - Qt.Key.Key_0
+            position = (self.player.duration() / 10) * number_pressed
+            self.player.setPosition(int(position))
+
+        elif event.key() in [Qt.Key.Key_Q, Qt.Key.Key_W, Qt.Key.Key_E, Qt.Key.Key_R, Qt.Key.Key_T, Qt.Key.Key_Y, Qt.Key.Key_U, Qt.Key.Key_I]:
+            # number_pressed
+            name = chr(event.key())
+            if shift_pressed:
+                self.tpkeys[str(name)] = str(self.player.position())
                 save_config(self.storage)
             else:
-                position = int(self.tpkeys.get(str(number_pressed)))
+                position = self.tpkeys.get(str(name))
                 if position is None: return
 
+                position = int(position)
                 self.player.setPosition(position)
                 self.player.play()
 
