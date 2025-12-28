@@ -209,10 +209,10 @@ class VideoPlayer(QWidget):
                 self.player.play()
         elif event.key() in [Qt.Key.Key_A, Qt.Key.Key_Left]:
             pos = self.player.position()
-            self.player.setPosition(max(0, pos - 2000))
+            self.player.setPosition(max(0, pos - 3000))
         elif event.key() in [Qt.Key.Key_D, Qt.Key.Key_Right]:
             pos = self.player.position()
-            self.player.setPosition(max(0, pos + 2000))
+            self.player.setPosition(max(0, pos + 3000))
         elif event.key() in [ Qt.Key.Key_Up]:
             self.volume += 0.1
             self.volume = min(max(0, self.volume),1)
